@@ -35,19 +35,18 @@
 </template>
 
 <script>
-// import moment from "moment";
-// import { format, parseISO } from "date-fns";
-// import { mapGetters, mapActions } from "vuex";
 import { mapGetters } from "vuex";
 
 export default {
   data: () => ({
     dialog: {
       fields: {
-        date: new Date().toISOString().substr(0, 10),
         menu: false,
-        textInput: "",
         step: 2,
+        date: new Date().toISOString().substr(0, 10),
+        textInput: "",
+        check: false,
+        id: new Date().getTime()
       },
     },
   }),
@@ -62,9 +61,7 @@ export default {
     exit() {
       this.$router.push("/");      
     },
-    update(){
-      console.log(this.tasks);
-      
+    update(){      
       const step = {
         step: this.dialog.fields.step
       }
@@ -72,18 +69,13 @@ export default {
       this.$store.dispatch('UPDATE_STEP', step);
 
       const task = {
+        id: this.dialog.fields.id,
         textInput: this.dialog.fields.textInput,
         date: this.dialog.fields.date,
+        check: this.dialog.fields.check,
       }
 
       this.$store.dispatch('UPDATE', task);
-
-
-      console.log(task);
-      console.log(this.appointments);
-      //Reset
-      // this.dialog.fields.textInput = '';
-      // this.dialog.fields.date = new Date().toISOString().substr(0, 10);
     }
   },
 };

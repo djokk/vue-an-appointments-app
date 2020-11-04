@@ -15,11 +15,20 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(item, i) in desserts" :key="i">
-            <td>{{ item.name }}</td>
-            <td>{{ item.date }}</td>
-            <td width="5px"><v-checkbox v-model="checkbox1"></v-checkbox></td>
-            <td><v-btn class="red">Удалить</v-btn></td>
+          <tr v-for="(appointment, i) in appointments" :key="i">
+            <td>{{ appointment.textInput }}</td>
+            <td>{{ appointment.date }}</td>
+            <td width="5px"><v-checkbox 
+              hide-details
+              class="shrink mr-2 mt-0"
+              color="success"
+              :value="appointment.check"
+              @click="checkAppointmentDone(appointment.id)"
+            ></v-checkbox></td>
+            <td><v-btn 
+              class="red"
+              @click="deleteAppointment(appointment.id)"
+            >Удалить</v-btn></td>
           </tr>
         </tbody>
       </template>
@@ -46,30 +55,36 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from "vuex";
 export default {
-  data() {
-    return {
-      desserts: [
-        {
-          name: "Frozen Yogurt",
-          date: "15.09.2020",
-        },
-        {
-          name: "Frozen Yogurt",
-          date: "15.09.2020",
-        },
-        {
-          name: "Frozen Yogurt",
-          date: "15.09.2020",
-        },
-      ],
-      checkbox1: false,
-    };
+  data: () => ({
+  }),
+  computed:{
+    ...mapGetters({
+      appointments: 'appointments',
+    }),
+  },
+  mounted(){
+    this.LOAD_LOCALSTORAGE()
   },
   methods: {
     add(){
       this.$router.push("/linkTwo");
-    }
+    },
+    ...mapActions({
+      LOAD_LOCALSTORAGE: 'LOAD_LOCALSTORAGE',
+      SAVE_LOCALSTORAGE: 'SAVE_LOCALSTORAGE',
+      DELETE_LOCALSTORAGE: 'DELETE_LOCALSTORAGE',
+      CHECK_DONE_LOCALSTORAGE: 'CHECK_DONE_LOCALSTORAGE'
+    }),
+    checkAppointmentDone(id){
+      this.CHECK_DONE_LOCALSTORAGE(id)
+    },
+    deleteAppointment(id){
+      
+        this.DELETE_LOCALSTORAGE(id)
+      
+    },
   },
 };
 </script>

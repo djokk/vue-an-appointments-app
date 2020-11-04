@@ -19,58 +19,87 @@ export default new Vuex.Store({
         tasks: [{
             'textInput': '',
             'date': '',
-            // 'step': 2
+            'check': false
         }],
-        appointments: [{
-            'textInput': 'dsadd',
-            'date': '2020-05-30',
-        }],
+        appointments: [],
     },
     mutations: {
-        update(state, payload) {
-            // state.textInput.push(payload);
-            state.tasks = payload;
-            // state.appointments.push(payload)
-            // state.tasks.push(payload)
-
-        },
         updateStep(state, payload_step) {
             state.one = payload_step
         },
-        addAppointment(state, payload_local) {
-            state.appointments.push(payload_local)
-                // state.appointments = JSON.parse(payload_local)
+        update(state, payload) {
+            state.tasks = payload
+        },
+        setAppointments(state, stored_payload) {
+            state.appointments = stored_payload
         },
         save_localstorage(state) {
+            state.appointments.push(state.tasks)
+
             localStorage.setItem('appointments', JSON.stringify(state.appointments))
+
             this._vm.flashMessage.success({
                 message: "Saved successfully!",
                 time: 1000,
             });
-        }
+        },
+        checkDoneAppointment(state, id) {
+            state.appointments = [...state.appointments].map((item) => {
+                if (item.id === id) {
+                    let { check, ...rest } = item
+                    return { check: !check, ...rest }
+                }
+                return item
+            })
+            localStorage.setItem('appointments', JSON.stringify(state.appointments))
+        },
+        deleteAppointment(state, id) {
+            state.appointments = [...state.appointments].filter((item) => item.id !== id)
+            localStorage.setItem('appointments', JSON.stringify(state.appointments))
 
+        }
     },
     actions: {
-        UPDATE({ commit }, payload) {
-            commit('update', payload)
-        },
         UPDATE_STEP({ commit }, payload_step) {
             commit('updateStep', payload_step)
         },
-        SAVE_LOCALSTORAGE({ commit }, payload_local) {
-            commit('addAppointment', payload_local)
+        UPDATE({ commit }, payload) {
+            commit('update', payload)
+        },
+        LOAD_LOCALSTORAGE({ commit }) {
+            if (localStorage.getItem('appointments') !== null && localStorage.getItem('appointments') !== 'undefined') {
+                let appointmentsStored = JSON.parse(localStorage.getItem('appointments'))
+                commit('setAppointments', appointmentsStored)
+            } else {
+                commit('setAppointments', [])
+            }
+        },
+        SAVE_LOCALSTORAGE({ commit }) {
             commit('save_localstorage')
         },
+        CHECK_DONE_LOCALSTORAGE({ commit }, id_appointment) {
+            // commit('setLoading', { loaderName: 'isSavingLoading', loading_bool: true })
+            commit('checkDoneAppointment', id_appointment)
+                // Demonstrate actions loading 
+                // setTimeout(() => commit('setLoading', { loaderName: 'isSavingLoading', loading_bool: false }), 700)
+        },
+        DELETE_LOCALSTORAGE({ commit }, id_appointment) {
+            // commit('setLoading', { loaderName: 'isSavingLoading', loading_bool: true })
+            commit('deleteAppointment', id_appointment)
+                // Demonstrate actions loading 
+                // setTimeout(() => commit('setLoading', { loaderName: 'isSavingLoading', loading_bool: false }), 700)
+        }
     },
     getters: {
-        tasks(state) {
-            return state.tasks
-        },
         one(state) {
             return state.one
         },
-        appointments(state) {
-            return state.appointments
-        }
+        tasks(state) {
+            return state.tasks
+        },
+        // appointments(state) {
+        //     return state.appointments
+        // }
+        appointments: state => state.appointments,
     }
 })

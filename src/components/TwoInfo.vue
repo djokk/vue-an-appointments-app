@@ -69,24 +69,15 @@ export default {
       };
       this.$store.dispatch("UPDATE_STEP", step);
     },
-    ...mapActions({
-      SAVE_LOCALSTORAGE: 'SAVE_LOCALSTORAGE',
-    }),
     ClearInstance(){
-      // this.dialog.fields.textInput = '';
-      // this.dialog.fields.date = new Date().toISOString().substr(0, 10);
       this.one.step = this.dialog.fields.step;      
       this.$router.push("/");
     },
+    ...mapActions({
+      SAVE_LOCALSTORAGE: 'SAVE_LOCALSTORAGE',
+    }),
     saveAppointment(){
-      // let { date, textInput } = this.dialog.fields
-      // let { date, textInput } = this.tasks
-      // this.SAVE_LOCALSTORAGE({ date, textInput })
-      const info = {
-        textInput: this.tasks.textInput,
-        date: this.tasks.date,
-      }
-      this.SAVE_LOCALSTORAGE(info)
+      this.SAVE_LOCALSTORAGE()
       
       setTimeout(()=>{
         this.ClearInstance()
